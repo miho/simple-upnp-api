@@ -1,0 +1,52 @@
+apply plugin: 'java'
+
+sourceCompatibility = '1.8'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+compileJava.options.debug = true
+compileJava.options.compilerArgs = ["-g"]
+	
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
+if (!hasProperty('mainClass')) {
+    ext.mainClass = 'edu.gcsc.vrl.v3d.surfaceextraction.Main'
+}
+
+repositories {
+    mavenCentral()
+    // You may define additional repositories, or even remove "mavenCentral()".
+    // Read more about repositories here:
+    //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
+    
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+dependencies {
+    // TODO: Add dependencies here ...
+    // You can read more about how to add dependency here:
+    //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
+    testCompile group: 'junit', name: 'junit', version: '4.10'
+    
+    compile files("ext-jars/sonos-java-1.0.0-SNAPSHOT-20150221.jar")
+    compile files("ext-jars/cling-core-2.0.1.jar")
+    compile files("ext-jars/seamless-util-1.1.0.jar")
+    compile files("ext-jars/seamless-http-1.1.0.jar")
+    compile files("ext-jars/seamless-xml-1.1.0.jar")
+    
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.7'
+    
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.7'
+    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.7'
+    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.7'
+    
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.9'
+    
+    compile group: 'joda-time', name: 'joda-time', version: '2.2'
+    
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.2.3'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.2.3'
+}
