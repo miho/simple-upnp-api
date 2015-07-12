@@ -14,6 +14,7 @@ import org.tensin.sonos.SonosConstants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.tensin.sonos.model.ZoneGroupState;
 
 /**
  * Based on code from
@@ -25,7 +26,10 @@ public class ZonePlayers {
     private static final Logger LOG
             = LoggerFactory.getLogger(ZonePlayers.class);
 
-    private List<ZonePlayer> zones
+    private final List<ZonePlayer> zones
+            = Collections.synchronizedList(new ArrayList<>());
+
+    private final List<ZoneGroup> zoneGroups
             = Collections.synchronizedList(new ArrayList<>());
 
     public static ZonePlayers discover() {
@@ -38,8 +42,10 @@ public class ZonePlayers {
                     public void remoteDeviceAdded(
                             Registry registry, RemoteDevice device) {
                                 if (zonePlayers.isSonos(device)) {
-                                    zonePlayers.add(new ZonePlayer(
-                                                    device, lookupService));
+                                    ZonePlayer zP = new ZonePlayer(
+                                            device, lookupService);
+                                    zonePlayers.add(zP);
+                                    zonePlayers.updateZoneGroups(zP, 3000);
                                 }
                             }
                 });
@@ -51,7 +57,31 @@ public class ZonePlayers {
         return zonePlayers;
     }
 
-    public List<ZonePlayer> getAll(int timeout) {
+    private void updateZoneGroups(ZonePlayer zP, long timeout) {
+
+        zoneGroups.clear();
+
+        long start = System.currentTimeMillis();
+
+        while (System.currentTimeMillis() - start < timeout) {
+
+            try {
+                zoneGroups.addAll(zP.getZoneGroups(this));
+                break;
+            } catch (Exception ex) {
+                LOG.debug("zonegroups could not be added");
+            }
+
+            Utils.sleep(100);
+        }
+
+    }
+
+    public List<ZoneGroup> getZoneGroups() {
+        return zoneGroups;
+    }
+
+    public List<ZonePlayer> getPlayers(int timeout) {
         long start = System.currentTimeMillis();
 
         while (System.currentTimeMillis() - start < timeout) {
@@ -59,6 +89,10 @@ public class ZonePlayers {
             Utils.sleep(100);
         }
 
+        return zones;
+    }
+    
+    public List<ZonePlayer> getDiscoveredPlayers() {
         return zones;
     }
 

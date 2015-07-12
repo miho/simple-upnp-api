@@ -92,11 +92,11 @@ public class SSDPNetworkClient {
 //        SSDPNetworkClient client = new SSDPNetworkClient();
 //        client.multicast();
         
-        ZonePlayers players = ZonePlayers.discover();
-        
-        for(ZonePlayer p : players.getAll(5000)) {
-            System.out.println("p: " + p.getZoneName() + " : " + p.getIPv4Adress());
-        }
+//        ZonePlayers players = ZonePlayers.discover();
+//        
+//        for(ZonePlayer p : players.getAll(5000)) {
+//            System.out.println("p: " + p.getZoneName() + " : " + p.getIPv4Adress());
+//        }
         
         System.exit(0);
     }
