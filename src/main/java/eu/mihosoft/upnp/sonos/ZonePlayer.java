@@ -121,4 +121,7 @@ public class ZonePlayer {
         return wrappedZonePlayer.getDevicePropertiesService().getLEDState();
     }
 
+    public String getIPv4Adress() {
+        return wrappedZonePlayer.getIP().toString();
+    }
 }

@@ -51,6 +51,17 @@ public class ZonePlayers {
         return zonePlayers;
     }
 
+    public List<ZonePlayer> getAll(int timeout) {
+        long start = System.currentTimeMillis();
+
+        while (System.currentTimeMillis() - start < timeout) {
+
+            Utils.sleep(100);
+        }
+
+        return zones;
+    }
+
     public ZonePlayer get(String zoneName, int timeout) {
         long start = System.currentTimeMillis();
 

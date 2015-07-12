@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.mihosoft.upnp.sonos;
+package eu.mihosoft.upnp;
 
+import eu.mihosoft.upnp.sonos.ZonePlayer;
+import eu.mihosoft.upnp.sonos.ZonePlayers;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -40,7 +42,7 @@ public class SSDPNetworkClient {
             socket.joinGroup(multicastAddress);
 
             // send discover
-            byte[] txbuf = DISCOVER_MESSAGE_ROOTDEVICE.getBytes("UTF-8");
+            byte[] txbuf = DISCOVER_MESSAGE.getBytes("UTF-8");
             DatagramPacket hi = new DatagramPacket(txbuf, txbuf.length,
                     multicastAddress, port);
             socket.send(hi);
@@ -75,18 +77,27 @@ public class SSDPNetworkClient {
         bout.flush();
     }
 
-    private final static String DISCOVER_MESSAGE_ROOTDEVICE
+    private final static String DISCOVER_MESSAGE
             = "M-SEARCH * HTTP/1.1\r\n"
-            + "ST: upnp:rootdevice\r\n"
-            + "MX: 3\r\n"
+            + "HOST: 239.255.255.250:1900\r\n"
             + "MAN: \"ssdp:discover\"\r\n"
-            + "HOST: 239.255.255.250:1900\r\n\r\n";
+            + "MX: 1\r\n"
+            + "ST: urn:schemas-upnp-org:device:ZonePlayer:1\r\n"
+            + "\r\n";
 
     /**
      * MAIN
      */
     public static void main(String[] args) throws Exception {
-        SSDPNetworkClient client = new SSDPNetworkClient();
-        client.multicast();
+//        SSDPNetworkClient client = new SSDPNetworkClient();
+//        client.multicast();
+        
+        ZonePlayers players = ZonePlayers.discover();
+        
+        for(ZonePlayer p : players.getAll(5000)) {
+            System.out.println("p: " + p.getZoneName() + " : " + p.getIPv4Adress());
+        }
+        
+        System.exit(0);
     }
 }
