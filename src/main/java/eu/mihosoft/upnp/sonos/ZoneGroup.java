@@ -60,12 +60,16 @@ public class ZoneGroup {
      * @return the name
      */
     public String getName() {
-        
+
         if (name == null) {
             this.name = getCoordinator().getZoneName();
         }
-        
+
         return name;
+    }
+
+    public boolean isGroup() {
+        return getDevices().size() > 1;
     }
 
     @Override

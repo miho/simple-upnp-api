@@ -14,6 +14,11 @@ import org.tensin.sonos.SonosConstants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.tensin.sonos.model.ZoneGroupState;
 
 /**
@@ -29,7 +34,7 @@ public class ZonePlayers {
     private final List<ZonePlayer> zones
             = Collections.synchronizedList(new ArrayList<>());
 
-    private final List<ZoneGroup> zoneGroups
+    private List<ZoneGroup> zoneGroups
             = Collections.synchronizedList(new ArrayList<>());
 
     public static ZonePlayers discover() {
@@ -66,6 +71,7 @@ public class ZonePlayers {
         while (System.currentTimeMillis() - start < timeout) {
 
             try {
+                LOG.debug("Adding groups");
                 zoneGroups.addAll(zP.getZoneGroups(this));
                 break;
             } catch (Exception ex) {
@@ -78,14 +84,28 @@ public class ZonePlayers {
     }
 
     public List<ZoneGroup> getZoneGroups(int timeout) {
-        
+
         getPlayers(timeout);
-        
+
+        // fix duplicates
+        zoneGroups = zoneGroups.stream().filter(distinctByKey(g -> g.getId())).
+                collect(Collectors.toList());
+
         return zoneGroups;
     }
-    
+
     public List<ZoneGroup> getDiscoveredZoneGroups() {
+
+        // fix duplicates
+        zoneGroups = zoneGroups.stream().filter(distinctByKey(g -> g.getId())).
+                collect(Collectors.toList());
+
         return zoneGroups;
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     public List<ZonePlayer> getPlayers(int timeout) {
@@ -98,7 +118,7 @@ public class ZonePlayers {
 
         return zones;
     }
-    
+
     public List<ZonePlayer> getDiscoveredPlayers() {
         return zones;
     }

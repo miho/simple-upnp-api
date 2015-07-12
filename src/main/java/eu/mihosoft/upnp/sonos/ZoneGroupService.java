@@ -55,7 +55,6 @@ class ZoneGroupService extends AbstractService {
         
         ZonePlayer zp =p.getPlayers(3000).get(0);
         System.out.println(zp.getZoneGroups(p).toString());
-        System.out.println("ID:::"+zp.getZoneId());
         System.exit(0);
     }
 

@@ -145,7 +145,8 @@ public class ZonePlayer {
     List<ZoneGroup> getZoneGroups(ZonePlayers zPlayers) {
         if (groups == null) {
             groups = groupService.getZoneGroupState().getGroups().stream().
-                    map((zG) -> new ZoneGroup(zPlayers, zG)).collect(Collectors.toList());
+                    map((zG) -> new ZoneGroup(zPlayers, zG)).distinct().
+                    collect(Collectors.toList());
         }
 
         return groups;
