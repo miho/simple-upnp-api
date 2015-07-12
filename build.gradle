@@ -50,3 +50,17 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.2.3'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.2.3'
 }
+
+// create a fat-jar (class files plus dependencies
+// excludes VRL.jar (plugin jar files must not start with 'vrl-\\d+')
+jar {
+
+    // dependencies except VRL
+    from configurations.runtime.asFileTree.
+//        filter({file->return !file.name.startsWith("vrl-0")}).
+//        filter({file->return !file.name.startsWith("VRL.jar")}).
+        files.collect { zipTree(it) }
+
+    // project class files compiled from source
+    from files(sourceSets.main.output.classesDir)
+}
