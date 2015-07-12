@@ -77,7 +77,14 @@ public class ZonePlayers {
 
     }
 
-    public List<ZoneGroup> getZoneGroups() {
+    public List<ZoneGroup> getZoneGroups(int timeout) {
+        
+        getPlayers(timeout);
+        
+        return zoneGroups;
+    }
+    
+    public List<ZoneGroup> getDiscoveredZoneGroups() {
         return zoneGroups;
     }
 
