@@ -50,7 +50,9 @@ public class ZonePlayers {
                                     ZonePlayer zP = new ZonePlayer(
                                             device, lookupService);
                                     zonePlayers.add(zP);
-                                    zonePlayers.updateZoneGroups(zP, 3000);
+
+                                    zonePlayers.updateZoneGroups(zP, 5000);
+                                    System.out.println("DISCOVERED: " + zP);
                                 }
                             }
                 });
@@ -64,22 +66,25 @@ public class ZonePlayers {
 
     private void updateZoneGroups(ZonePlayer zP, long timeout) {
 
-        zoneGroups.clear();
+        new Thread(() -> {
 
-        long start = System.currentTimeMillis();
+            zoneGroups.clear();
 
-        while (System.currentTimeMillis() - start < timeout) {
+            long start = System.currentTimeMillis();
 
-            try {
-                LOG.debug("Adding groups");
-                zoneGroups.addAll(zP.getZoneGroups(this));
-                break;
-            } catch (Exception ex) {
-                LOG.debug("zonegroups could not be added");
+            while (System.currentTimeMillis() - start < timeout) {
+
+                try {
+                    LOG.debug("Adding groups");
+                    zoneGroups.addAll(zP.getZoneGroups(this));
+                    break;
+                } catch (Exception ex) {
+                    LOG.debug("zonegroups could not be added");
+                }
+
+                Utils.sleep(100);
             }
-
-            Utils.sleep(100);
-        }
+        }).start();
 
     }
 
